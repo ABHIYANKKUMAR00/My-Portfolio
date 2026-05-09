@@ -81,39 +81,18 @@ export default function Hero() {
           background: 'radial-gradient(ellipse 80% 60% at 50% 40%, rgba(139,92,246,0.10) 0%, transparent 70%)',
         }} />
 
-        {/* Profile image — circular, sharp */}
+        {/* 3D HoloPhoto — mobile sized */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          style={{ position: 'relative', marginBottom: '1.5rem' }}
+          style={{ position: 'relative', marginBottom: '0.5rem' }}
         >
           <div style={{
-            width: 180, height: 180, borderRadius: '50%',
-            overflow: 'hidden',
-            border: '2.5px solid rgba(139,92,246,0.55)',
-            boxShadow: '0 0 40px rgba(139,92,246,0.35), 0 0 80px rgba(139,92,246,0.12)',
-          }}>
-            <img
-              src="/abhiyank.jpeg"
-              alt="Abhiyank Kumar"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 18%', display: 'block' }}
-            />
-          </div>
-          {/* Pulsing ring */}
-          <div style={{
-            position: 'absolute', inset: -10, borderRadius: '50%',
-            border: '1px solid rgba(139,92,246,0.28)',
-            animation: 'sp-holo-pulse 3s ease-in-out infinite',
-            pointerEvents: 'none',
+            position: 'absolute', inset: -20, borderRadius: '50%', pointerEvents: 'none',
+            background: 'radial-gradient(ellipse 80% 80% at 50% 50%, rgba(139,92,246,0.22) 0%, rgba(6,182,212,0.08) 50%, transparent 70%)',
           }} />
-          {/* Online dot */}
-          <div style={{
-            position: 'absolute', bottom: 10, right: 10,
-            width: 14, height: 14, borderRadius: '50%',
-            background: '#10b981', boxShadow: '0 0 8px #10b981',
-            border: '2px solid #030014',
-          }} />
+          <HoloPhoto size={Math.round(Math.min(window.innerWidth * 0.82, 320))} />
         </motion.div>
 
         {/* Badge */}
