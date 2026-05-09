@@ -13,8 +13,8 @@ function ConstellationCanvas() {
     let W = (canvas.width = window.innerWidth)
     let H = (canvas.height = window.innerHeight)
 
-    const COUNT = 65
-    const MAX_DIST = 130
+    const COUNT = W < 768 ? 30 : 65
+    const MAX_DIST = W < 768 ? 90 : 130
 
     const pts = Array.from({ length: COUNT }, () => {
       const rnd = Math.random()

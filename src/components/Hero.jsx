@@ -44,6 +44,19 @@ const fadeUp = {
 }
 
 export default function Hero() {
+  const [holoSize, setHoloSize] = useState(() =>
+    typeof window !== 'undefined' && window.innerWidth < 768
+      ? Math.round(window.innerWidth * 0.44)
+      : 520
+  )
+
+  useEffect(() => {
+    const onResize = () =>
+      setHoloSize(window.innerWidth < 768 ? Math.round(window.innerWidth * 0.44) : 520)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
   /* Parallax refs — updated imperatively to avoid React re-renders */
   const orb1Ref = useRef()
   const orb2Ref = useRef()
@@ -119,7 +132,7 @@ export default function Hero() {
 
       <div
         style={{ maxWidth: 1200, margin: '0 auto', width: '100%', position: 'relative', zIndex: 1 }}
-        className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-center"
+        className="grid grid-cols-2 gap-3 md:gap-12 lg:gap-16 items-center"
       >
 
         {/* ── Left: text ── */}
@@ -152,6 +165,7 @@ export default function Hero() {
 
           <motion.p
             custom={3} variants={fadeUp} initial="hidden" animate="visible"
+            className="hidden md:block"
             style={{ color: '#64748b', lineHeight: 1.85, maxWidth: 490, fontSize: '0.97rem', margin: '0 0 2rem' }}
           >
             Final-year CS student from Greater Noida, India. I architect AI-powered web experiences
@@ -161,7 +175,7 @@ export default function Hero() {
 
           <motion.div
             custom={4} variants={fadeUp} initial="hidden" animate="visible"
-            style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}
+            style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}
           >
             <motion.a
               href="/AbhiyankKumar_Resume.pdf"
@@ -170,36 +184,37 @@ export default function Hero() {
               whileHover={{ scale: 1.03, boxShadow: '0 0 36px rgba(139,92,246,0.55)' }}
               whileTap={{ scale: 0.97 }}
               style={{
-                padding: '12px 28px', borderRadius: 9,
+                padding: 'clamp(7px,1.5vw,12px) clamp(10px,2.5vw,28px)', borderRadius: 9,
                 background: 'linear-gradient(135deg, #8b5cf6, #06b6d4)',
                 border: 'none', color: 'white', fontWeight: 700,
-                fontSize: '0.9rem', cursor: 'pointer',
+                fontSize: 'clamp(0.65rem,1.8vw,0.9rem)', cursor: 'pointer',
                 textDecoration: 'none', display: 'inline-flex',
-                alignItems: 'center', gap: '0.4rem',
+                alignItems: 'center', gap: '0.3rem',
               }}
             >
-              View Resume ↗
+              Resume ↗
             </motion.a>
             <motion.button
               whileHover={{ scale: 1.03, boxShadow: '0 0 24px rgba(139,92,246,0.32)' }}
               whileTap={{ scale: 0.97 }}
               onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
               style={{
-                padding: '12px 28px', borderRadius: 9,
+                padding: 'clamp(7px,1.5vw,12px) clamp(10px,2.5vw,28px)', borderRadius: 9,
                 background: 'rgba(139,92,246,0.07)',
                 border: '1px solid rgba(139,92,246,0.35)',
-                color: '#a78bfa', fontWeight: 700, fontSize: '0.9rem',
+                color: '#a78bfa', fontWeight: 700, fontSize: 'clamp(0.65rem,1.8vw,0.9rem)',
                 cursor: 'pointer', transition: 'all 0.2s ease',
               }}
             >
-              Contact Me
+              Contact
             </motion.button>
           </motion.div>
 
           {/* ── Stats with glassmorphism ── */}
           <motion.div
             custom={5} variants={fadeUp} initial="hidden" animate="visible"
-            style={{ display: 'flex', gap: '1rem', marginTop: '2.8rem', flexWrap: 'wrap' }}
+            className="hidden md:flex"
+            style={{ gap: '1rem', marginTop: '2.8rem', flexWrap: 'wrap' }}
           >
             {[
               { num: '2+', label: 'AI Projects' },
@@ -224,7 +239,6 @@ export default function Hero() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
           style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}
-          className="hidden md:flex"
         >
           {/* Radial spotlight — parallax layer */}
           <div
@@ -240,7 +254,7 @@ export default function Hero() {
           {/* Outer ambient ring glow */}
           <div style={{
             position: 'absolute',
-            width: 560, height: 560,
+            width: holoSize * 1.08, height: holoSize * 1.08,
             borderRadius: '50%',
             background: 'transparent',
             border: '1px solid rgba(139,92,246,0.1)',
@@ -249,7 +263,7 @@ export default function Hero() {
             pointerEvents: 'none',
           }} />
 
-          <HoloPhoto />
+          <HoloPhoto size={holoSize} />
         </motion.div>
       </div>
 

@@ -283,17 +283,18 @@ function Scene() {
 /* ─────────────────────────────────────────────────
    HoloPhoto — pure Three.js, no DOM image layer
 ───────────────────────────────────────────────── */
-export default function HoloPhoto() {
+export default function HoloPhoto({ size = 520 }) {
+  const isMobile = size < 300
   return (
     <motion.div
       whileHover={{ scale: 1.03 }}
       transition={{ type: 'spring', stiffness: 200, damping: 25 }}
-      style={{ position: 'relative', width: 520, height: 520, flexShrink: 0 }}
+      style={{ position: 'relative', width: size, height: size, flexShrink: 0 }}
     >
       <Canvas
         camera={{ position: [0, 0, 7], fov: 50 }}
-        gl={{ antialias: true, alpha: true }}
-        dpr={[1, 2]}
+        gl={{ antialias: !isMobile, alpha: true, powerPreference: 'high-performance' }}
+        dpr={isMobile ? 1 : [1, 2]}
       >
         <Scene />
       </Canvas>
