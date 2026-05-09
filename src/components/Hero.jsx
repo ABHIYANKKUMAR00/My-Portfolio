@@ -1,0 +1,271 @@
+import { useEffect, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
+import HoloPhoto from './HoloPhoto'
+
+const roles = ['Full Stack Developer', 'AI Engineer', 'n8n Automation Specialist', 'ChatBot Developer', 'Freelancer']
+
+/* ─── TypeWriter ─── */
+function TypeWriter({ words }) {
+  const [wordIdx, setWordIdx] = useState(0)
+  const [charIdx, setCharIdx] = useState(0)
+  const [deleting, setDeleting] = useState(false)
+  const [text, setText] = useState('')
+
+  useEffect(() => {
+    const cur = words[wordIdx]
+    const timeout = setTimeout(() => {
+      if (!deleting && charIdx < cur.length) {
+        setText(cur.slice(0, charIdx + 1))
+        setCharIdx(c => c + 1)
+      } else if (!deleting && charIdx === cur.length) {
+        setTimeout(() => setDeleting(true), 1600)
+      } else if (deleting && charIdx > 0) {
+        setText(cur.slice(0, charIdx - 1))
+        setCharIdx(c => c - 1)
+      } else {
+        setDeleting(false)
+        setWordIdx(w => (w + 1) % words.length)
+      }
+    }, deleting ? 45 : 95)
+    return () => clearTimeout(timeout)
+  }, [charIdx, deleting, wordIdx, words])
+
+  return (
+    <span>
+      {text}
+      <span style={{ color: '#06b6d4', animation: 'blink 1s step-end infinite' }}>|</span>
+    </span>
+  )
+}
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  visible: (i) => ({ opacity: 1, y: 0, transition: { delay: i * 0.14, duration: 0.7, ease: [0.22, 1, 0.36, 1] } }),
+}
+
+export default function Hero() {
+  /* Parallax refs — updated imperatively to avoid React re-renders */
+  const orb1Ref = useRef()
+  const orb2Ref = useRef()
+  const gridRef = useRef()
+  const spotRef = useRef()
+
+  useEffect(() => {
+    const onMouse = (e) => {
+      const x = e.clientX / window.innerWidth - 0.5   // -0.5 → 0.5
+      const y = e.clientY / window.innerHeight - 0.5
+
+      if (orb1Ref.current)
+        orb1Ref.current.style.transform = `translate(${x * 32}px, ${y * 22}px)`
+      if (orb2Ref.current)
+        orb2Ref.current.style.transform = `translate(${x * -22}px, ${y * -16}px)`
+      if (gridRef.current)
+        gridRef.current.style.transform = `translate(${x * 10}px, ${y * 6}px)`
+      if (spotRef.current)
+        spotRef.current.style.transform = `translate(${x * 14}px, ${y * 10}px)`
+    }
+
+    window.addEventListener('mousemove', onMouse, { passive: true })
+    return () => window.removeEventListener('mousemove', onMouse)
+  }, [])
+
+  return (
+    <div style={{
+      minHeight: '100vh', position: 'relative',
+      display: 'flex', alignItems: 'center',
+      padding: 'clamp(80px, 12vw, 120px) 1.5rem clamp(60px, 8vw, 80px)',
+      overflow: 'hidden',
+    }}>
+
+      {/* ── Perspective grid floor ── */}
+      <div ref={gridRef} className="sp-grid-wrapper">
+        <div className="sp-grid" />
+      </div>
+
+      {/* ── Subtle grid pattern overlay ── */}
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        backgroundImage: 'linear-gradient(rgba(139,92,246,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(139,92,246,0.04) 1px, transparent 1px)',
+        backgroundSize: '60px 60px',
+      }} />
+
+      {/* ── Parallax orb: purple right ── */}
+      <div
+        ref={orb1Ref}
+        style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'radial-gradient(ellipse 72% 82% at 74% 50%, rgba(139,92,246,0.13) 0%, transparent 65%)',
+          transition: 'transform 0.35s ease-out',
+          willChange: 'transform',
+        }}
+      />
+
+      {/* ── Parallax orb: cyan left ── */}
+      <div
+        ref={orb2Ref}
+        style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'radial-gradient(ellipse 52% 62% at 20% 60%, rgba(6,182,212,0.07) 0%, transparent 60%)',
+          transition: 'transform 0.35s ease-out',
+          willChange: 'transform',
+        }}
+      />
+
+      {/* ── Scanline shimmer (very subtle) ── */}
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(139,92,246,0.012) 3px, rgba(139,92,246,0.012) 4px)',
+      }} />
+
+      <div
+        style={{ maxWidth: 1200, margin: '0 auto', width: '100%', position: 'relative', zIndex: 1 }}
+        className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-center"
+      >
+
+        {/* ── Left: text ── */}
+        <div>
+          <motion.div
+            custom={0} variants={fadeUp} initial="hidden" animate="visible"
+            style={{ fontFamily: 'monospace', fontSize: '0.82rem', color: '#8b5cf6', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          >
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px #10b981', display: 'inline-block', flexShrink: 0 }} />
+            Available for opportunities
+          </motion.div>
+
+          <motion.h1
+            custom={1} variants={fadeUp} initial="hidden" animate="visible"
+            style={{ fontSize: 'clamp(2rem, 5.5vw, 4rem)', fontWeight: 800, lineHeight: 1.08, margin: '0 0 0.65rem' }}
+          >
+            Hi, I'm{' '}
+            <span style={{ color: '#8b5cf6', textShadow: '0 0 40px rgba(139,92,246,0.55), 0 0 80px rgba(139,92,246,0.2)' }}>
+              Abhiyank
+            </span>
+          </motion.h1>
+
+          <motion.div
+            custom={2} variants={fadeUp} initial="hidden" animate="visible"
+            style={{ fontSize: 'clamp(1.1rem, 2.8vw, 1.7rem)', fontWeight: 600, color: '#94a3b8', marginBottom: '1.5rem', minHeight: '2.4rem' }}
+          >
+            <span style={{ color: '#06b6d4' }}>I am </span>
+            <TypeWriter words={roles} />
+          </motion.div>
+
+          <motion.p
+            custom={3} variants={fadeUp} initial="hidden" animate="visible"
+            style={{ color: '#64748b', lineHeight: 1.85, maxWidth: 490, fontSize: '0.97rem', margin: '0 0 2rem' }}
+          >
+            Final-year CS student from Greater Noida, India. I architect AI-powered web experiences
+            using React, LangChain, and modern cloud stacks. Passionate about RAG systems, vector
+            databases, and production-grade full-stack applications.
+          </motion.p>
+
+          <motion.div
+            custom={4} variants={fadeUp} initial="hidden" animate="visible"
+            style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}
+          >
+            <motion.a
+              href="/AbhiyankKumar_Resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.03, boxShadow: '0 0 36px rgba(139,92,246,0.55)' }}
+              whileTap={{ scale: 0.97 }}
+              style={{
+                padding: '12px 28px', borderRadius: 9,
+                background: 'linear-gradient(135deg, #8b5cf6, #06b6d4)',
+                border: 'none', color: 'white', fontWeight: 700,
+                fontSize: '0.9rem', cursor: 'pointer',
+                textDecoration: 'none', display: 'inline-flex',
+                alignItems: 'center', gap: '0.4rem',
+              }}
+            >
+              View Resume ↗
+            </motion.a>
+            <motion.button
+              whileHover={{ scale: 1.03, boxShadow: '0 0 24px rgba(139,92,246,0.32)' }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+              style={{
+                padding: '12px 28px', borderRadius: 9,
+                background: 'rgba(139,92,246,0.07)',
+                border: '1px solid rgba(139,92,246,0.35)',
+                color: '#a78bfa', fontWeight: 700, fontSize: '0.9rem',
+                cursor: 'pointer', transition: 'all 0.2s ease',
+              }}
+            >
+              Contact Me
+            </motion.button>
+          </motion.div>
+
+          {/* ── Stats with glassmorphism ── */}
+          <motion.div
+            custom={5} variants={fadeUp} initial="hidden" animate="visible"
+            style={{ display: 'flex', gap: '1rem', marginTop: '2.8rem', flexWrap: 'wrap' }}
+          >
+            {[
+              { num: '2+', label: 'AI Projects' },
+              { num: '10+', label: 'Technologies' },
+              { num: 'B.Tech', label: 'CS Final Year' },
+            ].map(s => (
+              <div key={s.label} className="glass-stat">
+                <div style={{ fontSize: '1.7rem', fontWeight: 800, color: '#8b5cf6', textShadow: '0 0 18px rgba(139,92,246,0.4)', lineHeight: 1 }}>
+                  {s.num}
+                </div>
+                <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '0.3rem', fontFamily: 'monospace', letterSpacing: '0.05em' }}>
+                  {s.label}
+                </div>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* ── Right: Holographic Photo ── */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}
+          className="hidden md:flex"
+        >
+          {/* Radial spotlight — parallax layer */}
+          <div
+            ref={spotRef}
+            style={{
+              position: 'absolute', inset: -80, pointerEvents: 'none',
+              background: 'radial-gradient(ellipse 70% 70% at 50% 50%, rgba(139,92,246,0.28) 0%, rgba(6,182,212,0.12) 40%, transparent 68%)',
+              transition: 'transform 0.4s ease-out',
+              willChange: 'transform',
+            }}
+          />
+
+          {/* Outer ambient ring glow */}
+          <div style={{
+            position: 'absolute',
+            width: 560, height: 560,
+            borderRadius: '50%',
+            background: 'transparent',
+            border: '1px solid rgba(139,92,246,0.1)',
+            boxShadow: '0 0 60px rgba(139,92,246,0.1), inset 0 0 60px rgba(139,92,246,0.05)',
+            animation: 'sp-holo-pulse 4s ease-in-out infinite',
+            pointerEvents: 'none',
+          }} />
+
+          <HoloPhoto />
+        </motion.div>
+      </div>
+
+      {/* ── Scroll hint ── */}
+      <motion.div
+        animate={{ y: [0, 10, 0] }}
+        transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          position: 'absolute', bottom: 28, left: '50%', transform: 'translateX(-50%)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+          color: '#334155', fontFamily: 'monospace', fontSize: '0.65rem', letterSpacing: '0.12em',
+        }}
+      >
+        <span>SCROLL</span>
+        <div style={{ width: 1, height: 38, background: 'linear-gradient(180deg, #8b5cf6, transparent)' }} />
+      </motion.div>
+    </div>
+  )
+}
