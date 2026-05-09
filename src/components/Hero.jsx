@@ -82,12 +82,16 @@ export default function Hero() {
     return () => window.removeEventListener('mousemove', onMouse)
   }, [])
 
+  const isMobile = holoSize < 300
+
   return (
     <div style={{
-      minHeight: '100vh', position: 'relative',
+      minHeight: '100svh', position: 'relative',
       display: 'flex', alignItems: 'center',
-      padding: 'clamp(80px, 12vw, 120px) 1.5rem clamp(60px, 8vw, 80px)',
-      overflow: 'hidden',
+      padding: isMobile
+        ? '68px 1.25rem 24px'
+        : 'clamp(80px, 12vw, 120px) 1.5rem clamp(60px, 8vw, 80px)',
+      overflowX: 'hidden',
     }}>
 
       {/* ── Perspective grid floor ── */}
@@ -137,17 +141,19 @@ export default function Hero() {
 
         {/* ── Left: text ── */}
         <div>
-          <motion.div
-            custom={0} variants={fadeUp} initial="hidden" animate="visible"
-            style={{ fontFamily: 'monospace', fontSize: '0.82rem', color: '#8b5cf6', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-          >
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px #10b981', display: 'inline-block', flexShrink: 0 }} />
-            Available for opportunities
-          </motion.div>
+          {!isMobile && (
+            <motion.div
+              custom={0} variants={fadeUp} initial="hidden" animate="visible"
+              style={{ fontFamily: 'monospace', fontSize: '0.82rem', color: '#8b5cf6', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px #10b981', display: 'inline-block', flexShrink: 0 }} />
+              Available for opportunities
+            </motion.div>
+          )}
 
           <motion.h1
             custom={1} variants={fadeUp} initial="hidden" animate="visible"
-            style={{ fontSize: 'clamp(2rem, 5.5vw, 4rem)', fontWeight: 800, lineHeight: 1.08, margin: '0 0 0.65rem' }}
+            style={{ fontSize: isMobile ? 'clamp(1.1rem, 5.5vw, 1.6rem)' : 'clamp(2rem, 5.5vw, 4rem)', fontWeight: 800, lineHeight: 1.1, margin: isMobile ? '0 0 0.3rem' : '0 0 0.65rem' }}
           >
             Hi, I'm{' '}
             <span style={{ color: '#8b5cf6', textShadow: '0 0 40px rgba(139,92,246,0.55), 0 0 80px rgba(139,92,246,0.2)' }}>
@@ -157,7 +163,7 @@ export default function Hero() {
 
           <motion.div
             custom={2} variants={fadeUp} initial="hidden" animate="visible"
-            style={{ fontSize: 'clamp(1.1rem, 2.8vw, 1.7rem)', fontWeight: 600, color: '#94a3b8', marginBottom: '1.5rem', minHeight: '2.4rem' }}
+            style={{ fontSize: isMobile ? 'clamp(0.72rem, 2.8vw, 0.9rem)' : 'clamp(1.1rem, 2.8vw, 1.7rem)', fontWeight: 600, color: '#94a3b8', marginBottom: isMobile ? '0.75rem' : '1.5rem', minHeight: isMobile ? '1.4rem' : '2.4rem' }}
           >
             <span style={{ color: '#06b6d4' }}>I am </span>
             <TypeWriter words={roles} />
@@ -244,7 +250,7 @@ export default function Hero() {
           <div
             ref={spotRef}
             style={{
-              position: 'absolute', inset: -80, pointerEvents: 'none',
+              position: 'absolute', inset: isMobile ? -10 : -80, pointerEvents: 'none',
               background: 'radial-gradient(ellipse 70% 70% at 50% 50%, rgba(139,92,246,0.28) 0%, rgba(6,182,212,0.12) 40%, transparent 68%)',
               transition: 'transform 0.4s ease-out',
               willChange: 'transform',

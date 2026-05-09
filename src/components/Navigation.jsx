@@ -59,7 +59,7 @@ export default function Navigation() {
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         style={{
           position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-          padding: scrolled ? '0.6rem 1.5rem' : '1rem 1.5rem',
+          padding: isMobile ? '0.5rem 1.25rem' : scrolled ? '0.6rem 1.5rem' : '1rem 1.5rem',
           background: scrolled ? 'rgba(3,0,20,0.9)' : 'transparent',
           backdropFilter: scrolled ? 'blur(20px)' : 'none',
           borderBottom: scrolled ? '1px solid rgba(139,92,246,0.12)' : 'none',
@@ -187,10 +187,10 @@ export default function Navigation() {
         )}
       </AnimatePresence>
 
-      {/* Section dot indicator */}
+      {/* Section dot indicator — hidden on mobile */}
       <div style={{
         position: 'fixed', right: '1.25rem', top: '50%', transform: 'translateY(-50%)',
-        zIndex: 90, display: 'flex', flexDirection: 'column', gap: '0.65rem',
+        zIndex: 90, display: isMobile ? 'none' : 'flex', flexDirection: 'column', gap: '0.65rem',
       }}>
         {sections.map((sec, i) => (
           <button

@@ -293,8 +293,8 @@ export default function HoloPhoto({ size = 520 }) {
     >
       <Canvas
         camera={{ position: [0, 0, 7], fov: 50 }}
-        gl={{ antialias: !isMobile, alpha: true, powerPreference: 'high-performance' }}
-        dpr={isMobile ? 1 : [1, 2]}
+        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+        dpr={isMobile ? Math.min(window.devicePixelRatio || 2, 2) : [1, 2]}
       >
         <Scene />
       </Canvas>
