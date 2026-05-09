@@ -2,33 +2,8 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const QUICK_REPLIES = ['Skills', 'Projects', 'Contact', 'AI Experience', 'About Me']
-
-const RESPONSES = {
-  skills: "Abhiyank's core stack: React, Redux, Python, Node.js, FastAPI on the full-stack side — plus LangChain, HuggingFace Transformers, and Pinecone for AI. Strongest in React frontends and RAG-powered AI apps! 🚀",
-  projects: "Two featured projects: (1) AI Medical Chatbot — a production RAG pipeline using LangChain + Pinecone + HuggingFace. (2) Myntra Clone — a full e-commerce app with React + Redux state management. Both are real production-grade builds! 💻",
-  contact: "Reach Abhiyank at abhiyankhatana@gmail.com or call +91 9627679373. He's based in Greater Noida, India and open to full-stack, AI engineering, or ML roles! 📬",
-  ai: "Deep AI expertise: LangChain pipelines, HuggingFace Transformers, RAG architecture, Pinecone vector databases, FastAPI backends for AI. He's built real production AI applications, not just tutorials! 🤖",
-  about: "Abhiyank is a final-year B.Tech CS student from Greater Noida. Strong DSA, DBMS, OS, and OOPs foundations combined with hands-on project experience in AI + full-stack web development! 🎓",
-  default: "I can tell you about Abhiyank's skills, projects, AI experience, education, or contact info. What would you like to explore? 😊",
-}
-
-function getResponse(input) {
-  const q = input.toLowerCase()
-  if (q.match(/skill|tech|stack|language|framework/)) return RESPONSES.skills
-  if (q.match(/project|work|built|chatbot|myntra|app/)) return RESPONSES.projects
-  if (q.match(/contact|email|phone|reach|hire|job|work with/)) return RESPONSES.contact
-  if (q.match(/ai|ml|rag|langchain|hugging|pinecone|machine learning/)) return RESPONSES.ai
-  if (q.match(/about|who|bio|education|degree|study|student/)) return RESPONSES.about
-  return RESPONSES.default
-}
-
-const QUICK_MAP = {
-  'Skills': RESPONSES.skills,
-  'Projects': RESPONSES.projects,
-  'Contact': RESPONSES.contact,
-  'AI Experience': RESPONSES.ai,
-  'About Me': RESPONSES.about,
-}
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+const SESSION_ID = crypto.randomUUID()
 
 export default function AIAssistant() {
   const [open, setOpen] = useState(false)
@@ -43,16 +18,25 @@ export default function AIAssistant() {
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, typing])
   useEffect(() => { if (open) setTimeout(() => setPulse(false), 3000) }, [open])
 
-  const send = (text) => {
-    if (!text.trim()) return
-    const response = QUICK_MAP[text] || getResponse(text)
-    setMessages(m => [...m, { from: 'user', text: text.trim() }])
+  const send = async (text) => {
+    if (!text.trim() || typing) return
+    const userText = text.trim()
+    setMessages(m => [...m, { from: 'user', text: userText }])
     setInput('')
     setTyping(true)
-    setTimeout(() => {
+    try {
+      const res = await fetch(`${API}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: SESSION_ID, message: userText }),
+      })
+      const data = await res.json()
+      setMessages(m => [...m, { from: 'bot', text: data.reply || "Sorry, I couldn't get a response right now." }])
+    } catch {
+      setMessages(m => [...m, { from: 'bot', text: "⚠ Connection issue. Please try again in a moment." }])
+    } finally {
       setTyping(false)
-      setMessages(m => [...m, { from: 'bot', text: response }])
-    }, 900 + Math.random() * 400)
+    }
   }
 
   return (

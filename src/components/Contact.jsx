@@ -47,16 +47,34 @@ const socials = [
   { label: 'Email', icon: '📧', href: 'mailto:abhiyankhatana@gmail.com', color: '#8b5cf6' },
 ]
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+
 /* ── Contact form ── */
 function ContactForm({ inView }) {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
+  const [error, setError] = useState('')
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault()
     setSending(true)
-    setTimeout(() => { setSending(false); setSent(true); setForm({ name: '', email: '', message: '' }) }, 1800)
+    setError('')
+    try {
+      const res = await fetch(`${API}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to send')
+      setSent(true)
+      setForm({ name: '', email: '', message: '' })
+    } catch (err) {
+      setError(err.message || 'Something went wrong. Try again.')
+    } finally {
+      setSending(false)
+    }
   }
 
   const inputStyle = {
@@ -159,6 +177,11 @@ function ContactForm({ inView }) {
                   </>
                 ) : 'Send Message →'}
               </motion.button>
+              {error && (
+                <div style={{ marginTop: '0.75rem', color: '#f87171', fontSize: '0.8rem', fontFamily: 'monospace', textAlign: 'center' }}>
+                  ⚠ {error}
+                </div>
+              )}
             </motion.form>
           )}
         </AnimatePresence>
