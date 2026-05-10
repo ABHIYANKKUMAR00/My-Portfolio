@@ -70,9 +70,9 @@ export default function Hero() {
   if (isMobile) {
     return (
       <div style={{
-        minHeight: '75vh', position: 'relative',
-        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        padding: '72px 1.25rem 2rem',
+        minHeight: '100vh', position: 'relative',
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        padding: '80px 1.25rem 3rem',
         overflowX: 'hidden', textAlign: 'center',
       }}>
         {/* Minimal bg glow */}
