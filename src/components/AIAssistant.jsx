@@ -8,7 +8,7 @@ const SESSION_ID = crypto.randomUUID()
 export default function AIAssistant() {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState([
-    { from: 'bot', text: "👋 Hi! I'm Riya — Abhiyank's AI portfolio guide. Ask me about his skills, projects, or how to contact him!" },
+    { from: 'bot', text: "👋 Hi! I'm Riya — Abhiyank Kumar's AI portfolio guide. Ask me about his skills, projects, or how to contact him!" },
   ])
   const [input, setInput] = useState('')
   const [typing, setTyping] = useState(false)
